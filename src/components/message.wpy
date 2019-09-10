@@ -1,0 +1,90 @@
+<!--  -->
+<template>
+  <view class='message'>
+      <block wx:for='{{list}}' wx:key='index' wx:for-item='wxItem' wx:for-index='index'>
+            <view class='item' @tap='check({{wxItem.id}})'>
+                <image src='{{wxItem.icon}}'></image>
+                <view class='right_text'>
+                    <text>{{wxItem.name}}</text>
+                    <text>{{wxItem.lastmsg}}</text>
+                </view> 
+            </view>
+      </block>
+  </view>
+</template>
+
+<script>
+  import api from '../common/api';
+  import wepy from 'wepy';
+  export default class Message extends wepy.component {
+    props = {};
+
+    data = {
+        list:[],
+    };
+
+    components = {};
+
+    methods = {
+        check(id){
+            this.$root.$navigate({url:'chat?id='+id});
+        }
+    };
+
+    events = {};
+
+    watch = {};
+
+    computed = {};
+
+    onLoad() { };
+
+    onShow() { };
+
+    async loadmessage(){
+        this.list = await api.getMessagaList();
+        console.log('list',this.list);
+        this.$apply();
+    }
+  }
+</script>
+
+<style lang='less'>
+.message {
+    padding:0 20rpx;
+    font-size: 32rpx;
+    .item {
+        height: 140rpx;
+        display: flex;
+        align-items: center; 
+        border-bottom: 1px solid #dad9d6;
+        padding-left:10rpx;
+        image {
+            width: 100rpx;
+            height: 100rpx;
+            border-radius: 5px;
+            margin-right:20rpx;
+            flex-shrink:0;
+        }
+        .right_text {
+           flex: 1;
+           display: flex;
+           flex-direction: column;
+           overflow: hidden;
+           text {
+                &:first-child{
+                  margin-bottom:10rpx;  
+                }
+                &:last-child{
+                    width: 100%;
+                    overflow: hidden;
+                    font-size: 26rpx; 
+                    color: #989898; 
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
+            }
+        }
+    }
+}
+</style>

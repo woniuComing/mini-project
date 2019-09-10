@@ -1,0 +1,119 @@
+<!--  -->
+<template>
+  <view class='input_container'>
+    <view class='input_layout'>
+        <image class='input_icon voice' src='../images/voice.png'></image>
+        <image class='input_icon face' src='../images/face.png'></image>
+        <image class='input_icon plus' src='../images/plus.png'></image>
+        <view class="send{{readyToSend.length === 0? ' hidden':''}}" @tap='send'>发送</view>
+        <input class="input_text {{focusFlag ? ' focusFlag':''}}" value='{{readyToSend}}' @input='input' @focus='focus' @blur='blur'></input>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  export default class Input extends wepy.component {
+    props = {};
+
+    data = {
+        focusFlag:false,
+        readyToSend:''
+    };
+
+    components = {};
+
+    methods = {
+        send(){
+            if(this.readyToSend){
+                this.$invoke('../chartboard','sendMessage',this.readyToSend);
+            }
+        },
+        input(event){
+            // console.log(event);
+            this.readyToSend = event.detail.value;
+        },
+        focus(event){
+            // console.log(event);
+            this.focusFlag = true;
+            this.$invoke('../chartboard','fixPosition',this.focusFlag);
+        },
+        blur(event){
+            // console.log(event);
+            this.focusFlag = false;
+            this.$invoke('../chartboard','fixPosition',this.focusFlag);
+        },
+         clear(){
+            this.readyToSend = '';
+        }
+    };
+   
+
+    events = {};
+
+    watch = {};
+
+    computed = {};
+
+    onLoad() { };
+
+    onShow() { };
+  }
+</script>
+
+<style lang='less'>
+.input_container {
+    width: 100%;
+    height: 100rpx;
+    position: fixed;
+    bottom: 0;
+    color:#7b7b7b;
+    background-color: #ededed;
+    border-top:1px solid #d8d8d8;
+    font-size: 24rpx;
+    .input_layout {
+        position:relative;
+        .input_icon {
+            width: 90rpx;
+            height: 90rpx;
+            position: absolute;
+            top:6rpx;
+            &.voice {
+                left: 20rpx;
+            }
+            &.face {
+                right: 120rpx;
+            }
+            &.plus {
+                right: 20rpx;
+            }
+        }
+        .input_text {
+            border-bottom: 1px solid #d8d8d8;
+            margin-left: 120rpx;
+            margin-right: 240rpx;
+            height: 80rpx;
+            font-size: 32rpx;
+            color:#000;
+        }
+        .send {
+            position: absolute;
+            right: 20rpx;
+            width: 90rpx;
+            display: inline-block;
+            box-sizing: border-box;
+            border: 1px solid #378c37;
+            background-color: #14b012;
+            height: 80rpx;
+            line-height: 78rpx;
+            color:#fff;
+            text-align: center;
+            font-size: 30rpx;
+            margin-top: 8rpx;
+            &.hidden {
+                display: none;
+            }
+        }
+    }
+}
+</style>

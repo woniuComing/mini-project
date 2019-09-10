@@ -1,0 +1,76 @@
+<style lang="less">
+    @import url('../css/base.wxss');
+    page,.container {
+        height: 100%;
+    }
+  .main_item {
+        width: 100%;
+        height:100%;
+        // background-color: red;
+    }
+</style>
+<template>
+  <view class="container">
+        <view class='main_item' hidden='{{currentTab != 0}}'>
+            <message></message>
+        </view>
+        <view class='main_item' hidden='{{currentTab != 1}}'>
+            <contact></contact>
+        </view>
+        <view class='main_item' hidden='{{currentTab != 2}}'>
+            <discovery></discovery>
+        </view>
+        <view class='main_item' hidden='{{currentTab != 3}}'>
+            <me></me>
+        </view>
+        <tab :active.async='currentTab'></tab>
+        <toast />
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import toast from 'wepy-com-toast';
+import tab from '../components/tab';
+import message from '../components/message';
+import contact from '../components/contact';
+import discovery from '../components/discovery';
+import chartboard from '../components/chartboard';
+import me from '../components/me';
+export default class Index extends wepy.page{
+    components= {
+        tab,
+        toast,
+        message,
+        contact,
+        discovery,
+        me,
+        chartboard
+    }
+    config = {
+        'navigationBarTitleText':'wepy-wechat',
+        'navigationBarTextStyle':'white',
+        'navigationBarBackgroundColor':'#000'
+    }
+    data = {
+        currentTab: 0,
+    }
+
+    onShow(){
+        console.log('onshow');
+        this.currentTab = 0 ;
+        this.$invoke('message','loadmessage');
+    }
+    onLoad(){
+        console.log('onLoad');
+    }
+
+    showToast(name) {
+        this.$invoke('toast','show', {
+            title: `${name}`,
+            img: 'https://raw.githubusercontent.com/kiinlam/wetoast/master/images/star.png'
+        })
+    }
+}
+  
+</script>

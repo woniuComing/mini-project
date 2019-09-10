@@ -1,0 +1,37 @@
+<!--  -->
+<template>
+  <view class='container'>
+      <demoscroll></demoscroll>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import demoscroll from '../components/demoscroll';
+  export default class demo extends wepy.page {
+    config = {
+      navigationBarTitleText: "",
+    };
+
+    data = {};
+
+    components = {
+        demoscroll
+    };
+
+    methods = {};
+
+    events = {};
+
+    watch = {};
+
+    computed = {};
+
+    onLoad() { };
+
+    onShow() { };
+  }
+</script>
+
+<style lang='less'>
+</style>

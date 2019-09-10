@@ -1,0 +1,76 @@
+<!--  -->
+<template>
+  <view class='common_item_wrap'>
+      <repeat for='{{itemArr}}' key='index' index='index' item='itemList'>
+          <view class='com_item_list' @tap='clickItem({{itemList}})'>
+            <image src='{{itemList.icon}}'></image>
+            <text class='item_title'>{{itemList.title}}</text>
+            <image class='item_arrow' src='../images/arrow_left.png'></image>
+          </view>
+      </repeat>
+      
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  export default class subItem extends wepy.component {
+    props = {
+        itemArr:Array,
+    };
+
+    data = {};
+    methods = {
+        clickItem(item){
+            // console.log(item);
+            //找到这一项
+            let i = this.itemArr.findIndex((v)=> v.title === item.title);
+            // console.log(i);
+            if(this.itemArr[i].action){
+                this.itemArr[i].action.call(this.$parent);
+            }else{
+                this.$root.showToast(this.itemArr[i].title);
+            }
+        }
+    }
+    onLoad() { 
+        console.log('item onload',this.itemArr);
+
+     };
+
+    onShow() { 
+        console.log('item onshow');
+    };
+  }
+</script>
+
+<style lang='less'>
+.common_item_wrap {
+   padding-top:40rpx;
+    .com_item_list {
+        position: relative;
+        background-color: #fff;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding:16rpx;
+        border-bottom: 1px solid #f0eff5;
+        &:last-child{
+            border: 0 none;
+        }
+        image {
+            width: 70rpx;
+            height: 70rpx;
+            margin:0 20rpx;
+        }
+        .item_arrow {
+            position: absolute;
+            width: 40rpx;
+            height: 40rpx;
+            top:50%;
+            margin-top:-20rpx;
+            right: 10rpx;
+        }
+    }
+}
+</style>

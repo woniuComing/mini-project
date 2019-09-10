@@ -1,0 +1,63 @@
+<!--  -->
+<template>
+  <view class='chat_wrap'>
+        <view class='chartboard_wrap'>
+            <chartboard></chartboard>
+        </view>
+        <view class='input_wrap'>
+            <myinput></myinput>
+        </view>  
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import api from '../common/api';
+  import global from '../common/global';
+  import chartboard from '../components/chartboard';
+  import myinput from '../components/input';
+  export default class Chat extends wepy.page {
+    config = {
+      navigationBarTitleText: "聊天窗口",
+    };
+
+    components = {
+        chartboard,
+        myinput,
+    }
+
+    data = {
+    };
+
+    onLoad(param) {
+        console.log('param',param);
+        let contact = global.getContact(param.id);
+        if(!contact){
+            this.$back();
+            return;
+        }
+        wx.setNavigationBarTitle({title: contact.name});
+        this.$invoke('chartboard','loadmessage',param.id);
+    };
+
+    onShow() {
+        console.log('chat onshow');
+     };
+
+  }
+</script>
+
+<style lang='less'>
+.chat_wrap {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    .chartboard_wrap {
+        flex:1;
+        // background-color: red;
+    }
+    .input_wrap {
+        height: 100rpx;
+    }
+}
+</style>

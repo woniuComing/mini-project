@@ -1,0 +1,16 @@
+{
+	"description": "A project copy wepy wechat demo",
+	"setting": {
+		"urlCheck": true,
+		"es6": false,
+		"postcss": false,
+		"minified": false
+	},
+	"compileType": "miniprogram",
+	"appid": "wx08a4249b555543e4",
+	"projectname": "copy-wepy-wechat-demo",
+	"miniprogramRoot": "dist/",
+	"simulatorType": "wechat",
+	"simulatorPluginLibVersion": {},
+	"condition": {}
+}

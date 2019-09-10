@@ -1,0 +1,193 @@
+<!--  -->
+<template>
+    <view class='scroll_contain'>
+        <scroll-view scroll-y='true' class="chat_wrapper{{focus? ' fixed' : ''}}" scroll-top="{{scrollTop}}" bindscroll="scroll" style="height:{{scroll_height}}rpx" scroll-into-view='{{scrollID}}' scroll-with-animation='true'>
+            <block wx:for='{{message}}' wx:key='index' wx:for-index='index' wx:for-item='chatItem'>
+                <view class="chatlist {{chatItem.from==='me'? ' me' : ' other'}}" id='roll{{index+1}}'>
+                    <image class='icon' src='{{chatItem.icon}}'></image>
+                    <view class='msgtext'>{{chatItem.msg}}</view>
+                    <view class='clearfix'></view>
+                </view>
+            </block>
+        </scroll-view>
+        <!-- <view @tap ='scrollTo'>点击滚动</view> -->
+    </view>  
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import global from '../common/global';
+  import api from '../common/api';
+  export default class Chartboard extends wepy.component {
+    props = {};
+
+    data = {
+        message:[],
+        focus:false,
+        scrollTop:200,
+        scroll_height:200,
+        scrollID:'roll1',
+    };
+    methods = {
+        scroll(event){
+            // console.log(event);
+        },
+        scrollTo(event){
+            // console.log(event);
+            this.scrollTop = this.scrollTop + 10;
+        }
+    };
+    onShow(){
+        // this.scrollTop = 300;
+        // console.log('chartboard onShow');
+    }
+    onLoad(){
+        // this.scrollTop = 300;
+        // console.log('chartboard onLoad');
+        let windowHeight = wx.getSystemInfoSync().windowHeight // 屏幕的高度
+        let windowWidth = wx.getSystemInfoSync().windowWidth // 屏幕的宽度
+        // this.setData({
+        // scroll_height: windowHeight * 750 / windowWidth - 100 - 10
+        // })
+        this.scroll_height = windowHeight * 750 / windowWidth - 100;
+        // console.log(wx.getSystemInfoSync(),this.scroll_height);
+    }
+    fixPosition(focus){
+        this.focus = focus;
+        if(this.focus){
+            this.scrollID = 'roll'+this.message.length;
+        }
+        this.$apply();
+    }
+    async loadmessage(id){
+        console.log('loadmessage id',id);
+        let userinfo, message;
+        try {
+            userinfo = await api.getUserInfo();
+        }catch(e){
+            console.log(e);
+            userinfo = {
+                nickName:'test',
+                id:'test',
+                avatarUrl:'../images/myheader.png'
+            }
+        }
+
+        this.current = userinfo;
+
+        try{
+            console.log(id);
+            message = await api.getHistory(id);
+        }catch(e){
+            console.log(e);
+            message = null;
+            console.error('getHistory fail');
+        }
+        
+        if(message){
+            this.message = message;
+            this.to = id;
+            this.message.forEach((msg) =>{
+                if(msg.from ==='me'){
+                    msg.name = userinfo.nickName;
+                    msg.icon = userinfo.avatarUrl;
+                }
+            });
+            console.log('message',message);
+            this.$apply();
+        }
+    }
+
+    async sendMessage(msg){
+        let id = this.to;
+        let msgobj = await api.sendMsg(id,msg);
+
+        msgobj.name = this.current.nickName;
+        msgobj.icon = this.current.avatarUrl;
+
+        this.message.push(msgobj);
+        this.$apply();
+        this.scrollID = 'roll'+this.message.length;
+        this.$invoke('../myinput','clear');
+        let randomReply = await api.getRandomReply(id);
+        this.replyMessage(randomReply);
+        // this.scrollTop = this.message.length*100;
+        
+    }
+
+    async replyMessage (msg){
+        let id = this.to;
+        let contact = global.getContact(id);
+        let msgobj = await api.replyMsg(id,msg);
+        msgobj.name = contact.name;
+        msgobj.icon = contact.icon;
+        // console.log('replyMsg',msgobj);
+        this.message.push(msgobj);
+        this.$apply();
+        this.scrollID = 'roll'+this.message.length;
+    }
+  }
+</script>
+
+<style lang='less'>
+.scroll_contain {
+    height: 100%;
+}
+.chat_wrapper {
+    width: 100%;
+    background-color: #ededed;
+    font-size: 32rpx;
+    position: fixed;
+    left: 0;
+    top:0;
+    &.fixed {
+        position: fixed;
+        left: 0;
+        top:0;
+    }
+}
+.clearfix:after{
+    content: "";
+    height: 0;
+    line-height: 0;
+    display: block;
+    clear: both;
+    visibility: hidden;
+}
+.clearfix {
+    height:1%;
+}
+.chatlist {
+    padding:20rpx 10rpx;
+    .icon {
+        width: 70rpx;
+        height: 70rpx;
+    }
+    .msgtext {
+        border-radius: 5px;
+        border: 1px solid #d8d8d8;
+        max-width: 450rpx;
+        padding:10rpx;
+    }
+    &.me {
+        .icon {
+           float: right;
+        }
+        .msgtext {
+            background-color: #9fe757;
+            float: right;
+            margin-right: 20rpx;
+        }
+    }
+    &.other {
+        .icon {
+           float: left;
+        }
+        .msgtext {
+            float: left;
+             background-color: #fff;
+             margin-left: 20rpx;
+        }
+    }
+}
+</style>

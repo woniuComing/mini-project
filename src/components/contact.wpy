@@ -1,0 +1,174 @@
+<!--  -->
+<template>
+  <view class='contact_wrapper'>
+      <view class='con_toplist_wrap con_wrap'>
+          <block wx:for='{{toplist}}' wx:key='index' wx:for-index='index' wx:for-item='list'>
+              <view class='con_list'>
+                  <image class='con_icon list_icon' src='{{list.icon}}'></image>
+                  <text class='list_name'>{{list.name}}</text>
+              </view>
+          </block>
+      </view>
+      <view class='con_users_wrap con_wrap'>
+          <block wx:for='{{contactlist}}' wx:key='index' wx:for-index='index' wx:for-item='item'>
+              <view class='con_user'>
+                  <view class='con_user_title'>{{index}}</view>
+                  <block wx:for='{{item}}' wx:key='index' wx:for-index='subIndex' wx:for-item='subItem'>
+                      <view class='con_item' @tap='check({{subItem.id}})'>
+                          <image class='con_icon con_item_icon' src='{{subItem.icon}}'></image>
+                          <text>{{subItem.name}}</text>
+                      </view>
+                  </block>
+              </view>
+          </block>
+          <view class='total_user' wx:if='total'>{{total}}位联系人</view>
+      </view>  
+      <alpha></alpha>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import api from '../common/api';
+  import global from '../common/global';
+  import alpha from './alpha';
+  export default class Contact extends wepy.component {
+    props = {};
+
+    data = {
+        toplist:[
+            {
+                icon:'../images/new_friend.png',
+                name:'新的朋友',
+            },
+            {
+                icon:'../images/group_chat.png',
+                name:'群聊',
+            },
+            {
+                icon:'../images/tag.png',
+                name:'标签',
+            },
+            {
+                icon:'../images/public.png',
+                name:'公众号',
+            },
+
+        ],
+        contactlist:[],
+        total:0
+    };
+
+    components = {
+        alpha,
+    };
+
+    methods = {
+        check(id){
+            this.$root.$navigate({url:'chat?id='+id});
+        }
+    };
+
+    onLoad() { 
+        this.loadContact();
+    };
+
+    onShow() {
+        console.log('contact onShow');
+    };
+    format(arr) {
+        let c,obj = {};
+        arr.forEach((item)=>{
+            c = item.id[0].toUpperCase();
+            if(obj[c]){
+                obj[c].push(item);
+            }else{
+                obj[c] = [item];
+            }
+        });
+        return obj;
+    }
+    async loadContact(){
+        let contacts = await api.getContact();
+        // console.log(contacts);
+        let contactobj = {};
+        // contacts.forEach((item)=>{
+        //     let key = item.id.charAt(0).toUpperCase();
+        //     if(contactobj[key]){
+        //         contactobj[key]=[...contactobj[key],item]
+        //     }else{
+        //          contactobj[key]=[item]
+        //     }
+        // })
+        // console.log(contactobj);
+        contacts.forEach((v)=>{
+            contactobj[v.id] = v;
+        });
+
+        global.setContact(contactobj);
+        this.total = contacts.length;
+        this.contactlist = this.format(contacts);
+        this.$apply();
+    }
+  }
+</script>
+
+<style lang='less'>
+    .contact_wrapper {
+        .con_wrap {
+            padding: 0 20rpx;
+        }
+        .con_icon {
+            width: 70rpx;
+            height: 70rpx;
+            border-radius: 10rpx;
+            margin-right: 20rpx;
+        }
+        .con_toplist_wrap {
+            .con_list{
+                padding:20rpx;
+                border-bottom: 1px solid #dad9d6;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                &:last-child {
+                    border: 0 none;
+                }
+                
+            }
+        }
+        .con_users_wrap {
+            padding-bottom:100rpx;
+        }
+        .con_user_title {
+            background-color:#f1f0f6;
+            padding:6rpx 0 10rpx 20rpx;
+            margin-left:-20rpx;
+            margin-right:-20rpx;
+            font-weight:bold;
+            color:#7e7d83;
+        }
+        .con_item {
+            padding:20rpx;
+            border-bottom: 1px solid #dad9d6;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            &:last-child {
+                border: 0 none;
+            }
+            .con_item_icon {
+                width: 70rpx;
+                height: 70rpx;
+            }
+        }
+        .total_user {
+            height: 80rpx;
+            line-height: 80rpx;
+            text-align: center;
+            margin:0 -20rpx;
+            background-color: #f1f0f6;
+            color:#7e7d83;
+        }
+    }
+</style>

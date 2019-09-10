@@ -1,0 +1,99 @@
+<!--  -->
+<template>
+  <view class='tab'>
+      <block wx:for='{{tabList}}' wx:key='index' wx:for-index='index' wx:for-item='item'>
+          <view class="tab_li {{active == index? 'active':''}}" @tap='changeTab({{index}})'>
+              <image src="../images/{{item.id}}{{active == index? '_active':''}}.png"></image>
+              <text>{{item.name}}</text>
+          </view>
+      </block>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  export default class Tab extends wepy.component {
+    props = {
+        active:{
+            twoWay:true
+        }
+    };
+
+    data = {
+        tabList:[
+            {
+                id:'message',
+                name:'微信'
+            },
+            {
+                id:'contact',
+                name:'通讯录'
+            },
+            {
+                id:'discovery',
+                name:'发现'
+            },
+            {
+                id:'me',
+                name:'我'
+            },
+        ],
+    };
+
+    components = {};
+
+    methods = {
+        changeTab(index){
+            console.log(index);
+            this.active = index;  
+        }
+    };
+
+    events = {};
+
+    watch = {};
+
+    computed = {};
+
+    onLoad() { };
+
+    onShow() { };
+  }
+</script>
+
+<style lang='less'>
+.fontcolor{
+    color:#7b7b7b;
+}
+.activecolor {
+    color:#13b113;
+}
+.tab {
+    width: 100%;
+    height: 100rpx;
+    position: fixed;
+    bottom: 0;
+    left: 0;   
+    background-color: #f7f7f7;
+    border-top: 1px solid #dad9d6;
+    display: flex;
+    flex-direction: row;
+    font-size: 24rpx;
+    padding-top:6rpx;
+    .fontcolor;
+    .tab_li {
+        flex:1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        &.active {
+            .activecolor;
+        }
+        image {
+            width: 60rpx;
+            height: 60rpx;
+        }
+    }
+}
+</style>

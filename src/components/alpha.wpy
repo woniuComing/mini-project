@@ -1,0 +1,55 @@
+<!--  -->
+<template>
+  <view class='alpha_wrapper'>
+      <block wx:for='{{tags}}' wx:key='index' wx:for-index='index' wx:for-item='item'>
+          <text class='letter'>{{item}}</text>
+      </block>
+  </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    let letters = ['★'];
+    for(let i= 0;i < 26;i++){
+        letters.push(String.fromCharCode(65+i));
+    };
+    letters.push('#');
+    // console.log('alpha letters',letters);
+  export default class Alpha extends wepy.component {
+    props = {};
+
+    data = {
+        tags: letters,
+    };
+
+    components = {};
+
+    methods = {};
+
+    events = {};
+
+    watch = {};
+
+    computed = {};
+
+    onLoad() { 
+        console.log('alpha onLoad');
+    };
+
+    onShow() {
+        console.log('alpha onshow');
+    };
+  }
+</script>
+
+<style lang='less'>
+.alpha_wrapper {
+    position: fixed;
+    top: 100rpx;
+    right: 10rpx;
+    .letter {
+        display: block;
+        font-size: 22rpx;
+    }
+}
+</style>

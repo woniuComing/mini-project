@@ -1,0 +1,56 @@
+<!--  -->
+<template>
+  <view class='discovery_wrap'>
+      <repeat for='{{list}}' key='index' index='index' item='subItem'>
+          <item :itemArr='subItem'></item>
+      </repeat>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import item from './item';
+  export default class Discovery extends wepy.component {
+    props = {};
+
+    data = {
+        list:{
+            dMoment: [{icon:'../images/moment.png', title: '朋友圈',action(){
+                this.showFriends();
+            }
+                    }],
+            dShopping: [{icon:'../images/shopping.png', title: '购物'}],
+            dDrift: [{icon:'../images/drift.png', title: '漂流瓶'}],
+            dAction: [{icon:'../images/scan.png', title: '扫一扫'}, {icon:'../images/shake.png', title: '摇一摇'}]
+        }
+    };
+
+    components = {
+        item,
+    };
+
+    methods = {};
+
+    events = {};
+
+    watch = {};
+
+    computed = {};
+
+    onLoad() { };
+
+    onShow() { };
+
+    showFriends() {
+        console.log('打开朋友圈');
+    }
+  }
+</script>
+
+<style lang='less'>
+.discovery_wrap {
+    width:100%;
+    height:100%;
+    background-color: #f0eff5;
+}
+</style>
